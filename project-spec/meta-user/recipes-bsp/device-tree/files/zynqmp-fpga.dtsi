@@ -1,0 +1,22 @@
+/*
+ * FPGA device exposing memory-mapped I/O and one interrupt.
+ */
+
+/ {
+        amba_pl: amba_pl@0 {
+
+                #address-cells = <0x2>;
+                #size-cells = <0x2>;
+                compatible = "simple-bus";
+                ranges;
+
+                fpga0: fpga0@a0000000 {
+                        compatible = "ece382m,fpga";
+                        reg = < 0x0 0xa0000000 0x0 0x01000000 >;
+                        interrupt-parent = < &gic >;
+                        interrupts = < 0x0 89 0x4 >;
+                };
+        };
+
+};
+
