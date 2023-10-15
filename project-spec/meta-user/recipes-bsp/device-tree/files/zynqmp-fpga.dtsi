@@ -12,7 +12,8 @@
 
                 fpga0: fpga0@a0000000 {
                         compatible = "ece382m,fpga";
-                        reg = < 0x0 0xa0000000 0x0 0x01000000 >;
+                        reg = < 0x0 0xa0000000 0x0 0x00000100 
+                                0x0 0xa0800000 0x0 0x00010000 >;
                         interrupt-parent = < &gic >;
                         interrupts = < 0x0 89 0x4 >;
                 };

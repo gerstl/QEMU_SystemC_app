@@ -34,7 +34,7 @@ int main(int argc, char * argv[])
   struct sigaction action;
   int fd;
 
-  //Ensure proper usage
+  // ensure proper usage
   if(argc > 2)
   {
     printf("Usage: %s [val]\n",argv[0]);
@@ -62,15 +62,17 @@ int main(int argc, char * argv[])
   fcntl(fd, F_SETFL, fcntl(fd, F_GETFL)|O_ASYNC);
 
   if(argc > 1) {
-    //Assign val
+    // Assign val
     val = atol(argv[1]);
 
-    //Write to addr0
+    // Write to addr0
     ioctl(fd, WRITE_CMD + 0, &val);
 
-  } else {
+    // and to memory
+    write(fd, &val, sizeof(val));
 
-    //Read hardware 
+  } else {
+    // Read hardware 
     ioctl(fd, READ_CMD + 0, &result);
 
     printf("The SystemC time is %lu ns\n", result);
@@ -78,6 +80,11 @@ int main(int argc, char * argv[])
     ioctl(fd, READ_CMD + 4, &result);
 
     printf("The SystemC clock is %lu\n", result);
+
+    // Read memory
+    read(fd, &result, sizeof(result));
+
+    printf("Memory dump is %lu\n", result);
   }
 
   // Read interrupt
@@ -88,7 +95,7 @@ int main(int argc, char * argv[])
   val = 1;
   ioctl(fd, WRITE_CMD + 3, &val);
 
-  //Wait for interrupt
+  // Wait for interrupt
   while(!det_int) continue;
 
   printf("Interrupt received\n");
