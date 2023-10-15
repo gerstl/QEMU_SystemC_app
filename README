@@ -31,14 +31,15 @@ Contents:
 
  application.irq/ - Kernel module driver for I/O and interrupt handling
 
-   Application that uses a kernel module as hardware driver with all I/O
-   via ioctl() calls to the kernel from the user application. Including 
+   Application that uses a kernel module as hardware driver with all control
+   register I/O via ioctl() calls to the kernel and access to the local FPGA
+   memory through the /dev/fpga device from the user application. Including 
    interrupt support via asynchronous signaling. 
 
  boot/ - Device tree for kernel module driver
 
    Device tree blob that registers an FPGA device with the kernel needed for
-   the kernel module device drive from the application.irq example to work
+   the kernel module device driver from the application.irq example to work
    (see notes below).
 
  project-spec/ - Device tree entry for kernel
@@ -80,10 +81,9 @@ Notes:
   and recommended. For example, since ioctl() kernel calls carry a lot of
   overhead, transfering large amounts of data to/from hardware is better
   achieved via memory-mapped interfaces (either from the user application or
-  in the kernel module itself using application-specific ioctl() calls that
-  copy data from the device into user space, possibly using DMA, etc.)
-  pointers passed from the application, using DMA, etc.)
-
+  in the kernel module itself using the /dev device or application-specific 
+  ioctl() calls that copy data from the device into user space, possibly using
+  DMA, etc.)
 
 -- 
 Andreas Gerstlauer <gerstl@ece.utexas.edu>
