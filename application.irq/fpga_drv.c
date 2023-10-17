@@ -94,7 +94,7 @@ static irqreturn_t fpga_int_handler(int irq, void *lp)
    /* acknowledge/reset the interrupt */
    writel(0ul, (volatile unsigned int *)&l.reg_ptr[3]);
 
-   /* Signal the user application that an interupt occured */
+   /* Signal the user application that an interrupt occurred */
    kill_fasync(&l.fasync_fpga_queue, SIGIO, POLL_IN);
 
    return IRQ_HANDLED;
