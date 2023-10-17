@@ -276,6 +276,7 @@ static struct miscdevice fpga_miscdev = {
 /* probbe and install module instance for device */
 static int fpga_drv_probe (struct platform_device *pdev) 
 {
+   void __iomem *base;
    struct resource *r_reg; /* IO register resources */
    struct resource *r_mem; /* IO memory resources */
    struct device *dev = &pdev->dev;
@@ -292,22 +293,26 @@ static int fpga_drv_probe (struct platform_device *pdev)
    }
 
    // get, register and remap address region assigned to the device registers
-   l.reg_ptr = devm_platform_get_and_ioremap_resource(pdev, 0, &r_reg);
-   if (!r_reg) {
+   base = devm_platform_get_and_ioremap_resource(pdev, 0, &r_reg);
+   if (IS_ERR(base)) {
      dev_err(dev, "fpga_drv: Unable to map FPGA registers.\n");
+     rv = PTR_ERR(base);
      goto end;
    }
 
+   l.reg_ptr = base;
    l.reg_start = r_reg->start;
    l.reg_end = r_reg->end;
 
    // get, register and remap address region assigned to the device memory
-   l.mem_ptr = devm_platform_get_and_ioremap_resource(pdev, 1, &r_mem);
-   if (!r_mem) {
+   base = devm_platform_get_and_ioremap_resource(pdev, 1, &r_mem);
+   if (IS_ERR(base)) {
      dev_err(dev, "fpga_drv: Unable to map FPGA memory.\n");
+     rv = PTR_ERR(base);
      goto end;
    }
 
+   l.mem_ptr = base;
    l.mem_start = r_mem->start;
    l.mem_end = r_mem->end;
 
