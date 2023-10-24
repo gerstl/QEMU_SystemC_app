@@ -42,8 +42,13 @@
 #define FPGA_BASE    0xa0000000
 #endif
 
-#define FPGA_MASK    0x00ffffff
-#define FPGA_SIZE    0x01000000
+#define REG_BASE    0x00000000
+#define REG_MASK    0x000000ff
+#define REG_SIZE    0x00000100
+
+#define MEM_BASE    0x00800000
+#define MEM_MASK    0x0000ffff
+#define MEM_SIZE    0x00010000
 
 #define COMMAND_MASK 0x80000000
 
@@ -162,8 +167,8 @@ static long fpga_ioctl1(struct file *file, unsigned int cmd, unsigned long arg){
 #endif
 
    // Set the offset for register accesses
-   offset = ~COMMAND_MASK & cmd & FPGA_MASK;
-   if(offset > FPGA_SIZE)
+   offset = ~COMMAND_MASK & cmd & REG_MASK;
+   if(offset > REG_SIZE)
       retval=-EINVAL;
 
    command_type = COMMAND_MASK & cmd;
@@ -404,8 +409,14 @@ static struct platform_driver fpga_driver = {
 /* Resources assigned to device */ 
 static const struct resource fpga_resources[] = {
   {
-    .start= FPGA_BASE,
-    .end=   FPGA_BASE+FPGA_SIZE-1,
+    .start= FPGA_BASE+REG_BASE,
+    .end=   FPGA_BASE+REG_BASE+REG_SIZE-1,
+    .flags= IORESOURCE_MEM,
+    .name= "io-regs"
+    },
+  {
+    .start= FPGA_BASE+MEM_BASE,
+    .end=   FPGA_BASE+MEM_BASE+MEM_SIZE-1,
     .flags= IORESOURCE_MEM,
     .name= "io-memory"
     },
@@ -440,7 +451,7 @@ static int __init fpga_init_module(void)
    // if we are asked to install the device, register (and hence probe) it
    if(install) {
      fpga_dev = platform_device_register_simple(DRIVER_NAME, -1, 
-                                                &(fpga_resources[0]), 2);
+                                                &(fpga_resources[0]), 3);
      if (IS_ERR(fpga_dev)) {
        rv = PTR_ERR(fpga_dev);
        platform_driver_unregister(&fpga_driver);
