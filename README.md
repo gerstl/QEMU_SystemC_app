@@ -1,4 +1,4 @@
-Sample ARM application for SystemC-based HW/SW Co-Simulation
+Sample ARM Application for SystemC-based HW/SW Co-Simulation
 ============================================================
 
 This package contains a (cross-compiled) application example for interaction 
