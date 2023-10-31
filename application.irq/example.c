@@ -7,6 +7,8 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
+#include <assert.h>
+#include <err.h>
 
 #define READ_CMD  (0x0 << 31)
 #define WRITE_CMD (0x1 << 31)
@@ -66,18 +68,18 @@ int main(int argc, char * argv[])
     val = atol(argv[1]);
 
     // Write to addr0
-    ioctl(fd, WRITE_CMD + 0, &val);
+    if(ioctl(fd, WRITE_CMD + 0, &val)) err(1, "Writing");
 
     // and to memory
     write(fd, &val, sizeof(val));
 
   } else {
     // Read hardware 
-    ioctl(fd, READ_CMD + 0, &result);
+    if(ioctl(fd, READ_CMD + 0, &result)) err(1, "Reading SystemC time");
 
     printf("The SystemC time is %lu ns\n", result);
 
-    ioctl(fd, READ_CMD + 4, &result);
+    if(ioctl(fd, READ_CMD + 4, &result)) err(1, "Reading SystemC clock");
 
     printf("The SystemC clock is %lu\n", result);
 
@@ -88,12 +90,12 @@ int main(int argc, char * argv[])
   }
 
   // Read interrupt
-  ioctl(fd, READ_CMD + 3, &result);
+  if(ioctl(fd, READ_CMD + 3, &result)) err(1, "Reading interrupt");
   printf("Interrupt is %lu\n", result);
 
   // Trigger interrupt
   val = 1;
-  ioctl(fd, WRITE_CMD + 3, &val);
+  if(ioctl(fd, WRITE_CMD + 3, &val)) err(1, "Trigger interrupt");
 
   // Wait for interrupt
   while(!det_int) continue;
