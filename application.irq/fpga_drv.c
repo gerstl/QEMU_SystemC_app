@@ -175,7 +175,7 @@ static long fpga_ioctl1(struct file *file, unsigned int cmd, unsigned long arg){
    {
       case 0:
          //read
-         if(!access_ok((unsigned int *)arg, sizeof(long)))
+         if(!access_ok((unsigned long *)arg, sizeof(long)))
             return -EFAULT;
 
          value = readl((volatile unsigned int *)&l.reg_ptr[offset]);
@@ -190,7 +190,7 @@ static long fpga_ioctl1(struct file *file, unsigned int cmd, unsigned long arg){
          //write
          access_addr = l.reg_ptr + offset;
 
-         if(!access_ok((unsigned int *)arg, sizeof(long)))
+         if(!access_ok((unsigned long *)arg, sizeof(long)))
             return -EFAULT;
 
          get_user(value, (unsigned long *)arg);
