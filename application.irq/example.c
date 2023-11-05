@@ -50,7 +50,7 @@ int main(int argc, char * argv[])
   action.sa_handler = sighandler;
   action.sa_flags=0;
 
-  sigaction(SIGIO, &action, NULL);
+  if(sigaction(SIGIO, &action, NULL)) err(1, "Setting signal handler");
 
   // open hardware device (driver)
   fd=open("/dev/fpga", O_RDWR);
@@ -60,8 +60,8 @@ int main(int argc, char * argv[])
       printf("Unable to open /dev/fpga.  Ensure it exists!\n");
       return -1;
   }
-  fcntl(fd, F_SETOWN, getpid());
-  fcntl(fd, F_SETFL, fcntl(fd, F_GETFL)|O_ASYNC);
+  if(fcntl(fd, F_SETOWN, getpid())) err(1, "Set owner");
+  if(fcntl(fd, F_SETFL, fcntl(fd, F_GETFL)|O_ASYNC)) err(1, "Set flags");
 
   if(argc > 1) {
     // Assign val
