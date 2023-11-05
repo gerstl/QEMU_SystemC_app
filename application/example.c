@@ -47,6 +47,8 @@ int main(int argc, char * argv[]) {
   {
     printf("Register mapping failed\n");
     fflush(stdout);
+    close(fd);
+    return -1;
   }
 
   // Do the same for the device memory region
@@ -55,6 +57,9 @@ int main(int argc, char * argv[]) {
   {
     printf("Memory mapping failed\n");
     fflush(stdout);
+    munmap((void*)base, REG_SIZE);
+    close(fd);
+    return -1;
   }
 
   if(argc > 1) {
